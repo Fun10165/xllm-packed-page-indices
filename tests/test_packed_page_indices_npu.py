@@ -19,12 +19,10 @@ from __future__ import annotations
 import pytest
 import torch
 
-from solution import prepare
+if not hasattr(torch, "npu") or not torch.npu.is_available():
+    pytest.skip("NPU required", allow_module_level=True)
 
-pytestmark = pytest.mark.skipif(
-    not hasattr(torch, "npu") or not torch.npu.is_available(),
-    reason="NPU required",
-)
+from solution import prepare  # noqa: E402
 
 _DEVICE = "npu:0"
 
