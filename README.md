@@ -2,7 +2,7 @@
 
 昇腾社区任务「题目6：ragged page indices 打包算子」的提交工程。算子把 ragged 页表的有效前缀压紧，并逐层翻译为物理页号，供变长 Attention 与缓存组件读取。
 
-上游贡献分支：`Fun10165/xllm` 的 `feat/packed-page-indices`，目录 `xllm/python/kernels_npu/triton/packed_page_indices.py` 与 `tests/python/test_packed_page_indices_npu.py`。本仓库是完整交付：主机侧 C++ 规划、Triton 设备核、测试与自验证材料。
+上游贡献分支：`Fun10165/xllm` 的 `feat/packed-page-indices`，目录 `xllm/core/kernels/npu/xllm_ops/packed_page_indices/`（自包含子目录，不修改既有 CMake 目标）。本仓库是完整交付：主机侧 C++ 规划、Triton 设备核、测试与自验证材料。
 
 ## 目录
 
@@ -67,7 +67,7 @@ python3 /mnt/workspace/pkg/golden.py --verify-functional \
   --output /mnt/workspace/functional2.json
 
 # 配对计时（驱动见证据目录对应的执行记录）
-python3 bench_submission.py
+python3 bench.py --package /mnt/workspace/pkg --implementation . --output evidence/result.json
 ```
 
 ## 实测结果
@@ -81,7 +81,7 @@ python3 bench_submission.py
 
 ## 与上游 PR 的关系
 
-任务书 §5 指向 `xllm/core/kernels/npu/xllm_ops`，该目录只放既有 aclnn 符号的 C++ 包装（`EXEC_NPU_CMD`）。本题明确无需提供 ACLNN 自定义安装包，设备计算由 Triton Ascend 完成，因此上游 PR 落在仓库既有的 NPU Python Triton 算子目录；主机侧 C++ 规划只属于提交工程，不进入上游构建。详见 `DESIGN.md` 第 8 节。
+任务书 §5 指向 `xllm/core/kernels/npu/xllm_ops`，该目录现有文件都是既有 aclnn 符号的 C++ 包装（`EXEC_NPU_CMD`），构建时统一链接 `xllm_ops`。本题明确无需提供 ACLNN 自定义安装包，因此上游 PR 在 `xllm_ops` 下新增自包含子目录 `packed_page_indices/`：自带主机侧 C++ 构建、Triton 核、测试与自验证材料，不修改既有 CMake 目标，也不依赖 aclnn 符号。详见 `DESIGN.md` 第 8 节。
 
 ## 说明
 

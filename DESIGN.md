@@ -119,8 +119,8 @@ X, M, cu (NPU)
 
 因此：
 
-- 上游 PR 落在仓库既有的 NPU Python Triton 目录，附真机测试；
-- 本提交工程额外提供主机侧 C++ 规划扩展，承担任务书要求的“主机侧调度”，不进入上游构建；
+- 上游 PR 在 `xllm_ops` 下新增自包含子目录 `packed_page_indices/`，自带主机侧 C++ 构建、Triton 核、测试与自验证材料；
+- 不修改 `xllm_ops/CMakeLists.txt`，不新增 aclnn 符号依赖，既有目标构建不受影响；
 - 主机侧与设备侧的职责边界是：C++ 只读 CPU 副本并产出计划，Triton 只做设备计算与输出分配。
 
 ## 9. 依赖
