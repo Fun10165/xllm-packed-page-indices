@@ -366,6 +366,15 @@ def test_invalid_inputs_are_rejected(mutation: str) -> None:
         prepare(inputs, attributes)
 
 
+def test_non_nd_storage_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    import torch_npu
+
+    x, m, cu = _base_inputs()
+    monkeypatch.setattr(torch_npu, "get_npu_format", lambda tensor: "FRACTAL_NZ")
+    with pytest.raises(ValueError, match="ND storage"):
+        prepare([x, m, cu], {})
+
+
 def test_non_dict_attributes_are_rejected() -> None:
     x, m, cu = _base_inputs()
     with pytest.raises(TypeError):
